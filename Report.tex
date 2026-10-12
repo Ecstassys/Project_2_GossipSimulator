@@ -1,0 +1,96 @@
+\documentclass[conference]{styles/acmsiggraph}
+
+\usepackage{fullpage} % changes the margin
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{float}
+\setlength{\parskip}{.8mm}
+
+\title{\huge Gossip and Push-Sum Simulator Report \\ \LARGE {COP5612 : Distributed Operating Systems Principles}}
+\author{\Large Vudavagandla Rohan, Verma Jatin\\ vudavagandla.ro@ufl.edu, jverma@ufl.edu}
+\pdfauthor{Vudavagandla Rohan, Verma Jatin}
+
+\hypersetup{
+	colorlinks=true,
+}
+
+\titlespacing*{\section}{0pt}{5.5ex plus 1ex minus .2ex}{2ex}
+\titlespacing*{\subsection}{0pt}{3ex}{2ex}
+
+\begin{document}
+\maketitle
+
+\section{Theoretical Part}
+\subsection{Gossip Algorithm}
+A decentralized communication method which is used for exchanging information among different nodes, this helps information to exchange between multiple nodes in faster and reliable way 
+$$(O(\log n) rounds)$$ is the the logarithmic  time for reaching every node.
+
+A participant (actor) is told/sent a rumor (fact) by the main process.
+Each actor selects a random neighbor and tells it the rumor.
+Each actor keeps track of rumors and how many times it has heard the rumor. It stops transmitting once it has heard the rumor 10 times in our implementation.
+
+\subsection{Push-Sum}
+Similar to Gossip Algorithm but its find of different, its used for calculating average or aggregate value across the distributed network 
+it does not require central coordinator or a doubly stochastic communication matrix for passing the information, it was  developed by Kempe, Dobra, and Gehrke in 2003
+
+\newpage
+\section{Setup}
+Every node is an Erlang process. We implemented gossip and push-sum on four topologies (full, 2D grid,
+line, imperfect 2D grid). Each data point is the average of 3 runs, measured with
+{erlang:monotonic\_time(microsecond)} on one machine. For 2D and imp2D the number of actors is rounded
+up to a perfect square. Convergence for gossip means every actor has heard the rumor at least once
+(actors stop transmitting after 10 hearings, and send on a 1 ms timer until then). Convergence for
+push-sum means every actor has terminated (its s/w ratio changed by less than 1e-10 in 3 consecutive
+rounds). In every push-sum run the final estimate matched the true average (N+1)/2.
+\subsubsection*{Gossip Algorithm Results}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{gossip_plot_both_runs.png}
+\caption{Gossip Results}
+\end{figure}
+
+\subsubsection*{Push-Sum Algorithm Results}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{pushsum_plot_both_runs.png}
+\caption{Push-Sum Results}
+\end{figure}
+
+\subsubsection*{Summary of all the runs}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{image.png}
+\caption{Summary of All Runs}
+\end{figure}
+
+
+\section{Finding}
+\textbf{Topology ordering is the same for both algorithms:} full is fastest, then imp2D, then 2D, and the line is
+slowest. The better connected the network, the faster information mixes.
+\textbf{Gossip on a line grows linearly} (exponent 1.00, about 4 ms per actor, 41 s at N=10000). The rumor can
+only move one hop at a time, so the time is proportional to the length of the line.
+\textbf{Gossip on full and imp2D grows very slowly} (exponents 0.22 and 0.18; roughly logarithmic). Going
+from 100 to 5000 actors only about doubles the time for full. Plain 2D grows faster (exponent 0.54, since
+the grid diameter is about the square root of N).
+\textbf{One random extra link makes a huge difference.} imp2D has only one more neighbor than 2D, but at
+N=5041 it is about 7x faster for gossip (71 ms vs 501 ms) and about 50x faster for push-sum (1.9 s vs 97
+s).
+\textbf{Push-sum scales much worse than gossip on sparse topologies.} The exponent is about 2.0 for 2D
+and about 2.9 for the line (1.1 s at N=100, 9.4 s at N=200, 129 s at N=500), against about 1.2 for full and
+imp2D. In push-sum every actor's ratio must settle, not just receive one message, and only one message
+is in flight at a time, so the pairs have to diffuse slowly across a poorly connected network.
+\textbf{Largest networks:} gossip reached N=10000 on the line and N=5000 or more on the others; push-sum
+reached N=5000 on full, 5041 on imp2D and 2D, and N=500 on the line (N=1000 on the line works but
+would take roughly 15 minutes per run).
+
+\section{Caveats}
+All measurements come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
+Erlang scheduler shares cores among thousands of processes. Only 3 runs were averaged per point, so
+small differences (especially at small N) are noise. Gossip times include the 1 ms send timer, which sets a
+floor of a few milliseconds per hop of the spread.
+
+The measurements in the dashed plot comes from \textbf{Macbook Pro M1 Pro}. We decided to show plots on both of our machines to see differences and similarities in the plot due to different CPU chips. 
+
+\end{document}
