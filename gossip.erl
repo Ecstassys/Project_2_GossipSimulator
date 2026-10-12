@@ -17,7 +17,7 @@ run(N, Topo) ->
 wait_heard(0) -> ok;
 wait_heard(K) -> receive {heard, _} -> wait_heard(K - 1) end.
 
-%% Actor side: Count = how many times I have heard the rumor
+%% Actor side: Count = how many times did the actor hear the rumor 
 actor(Id, Ns, Count, Main) ->
     receive
         rumor ->
@@ -27,10 +27,10 @@ actor(Id, Ns, Count, Main) ->
                 _ -> ok
             end,
             actor(Id, Ns, Count + 1, Main);
-        tick when Count < 10 ->
+        tick when Count < 10 -> %% if the actor has not heard the rumor 10 times 
             topology:send_random(Id, Ns, rumor),
             erlang:send_after(1, self(), tick),
             actor(Id, Ns, Count, Main);
-        tick ->                                             % heard 10 times: stop sending
+        tick ->                                             % if the actor heard the rumor for 10 times: stop sending
             actor(Id, Ns, Count, Main)
     end.

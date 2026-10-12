@@ -1,9 +1,8 @@
-%% project2.erl - entry point: parses args, times the run, picks the algorithm
+%% entry point: parses args, times the run, picks the algorithm
 -module(project2).
 -export([start/3, main/1]).
 
-%% Shell:        project2:start(100, line, gossip).
-%% Command line: erl -noshell -run project2 main 100 line gossip -s init stop
+
 main([N, Topo, Algo]) ->
     start(list_to_integer(N), list_to_atom(Topo), list_to_atom(Algo));
 main(_) ->
