@@ -4,6 +4,26 @@
 - Rohan Vudavagandla (vudavagandla.ro@ufl.edu)
 - Jatin Verma (jverma@ufl.edu)
 
+## How to run it?
+
+Compile all modules:
+
+```sh
+erlc *.erl
+```
+
+Run from the command line as `numNodes topology algorithm`, where topology is one of `full`, `2D`, `line`, `imp2D` and algorithm is one of `gossip`, `push-sum`:
+
+```sh
+erl -noshell -run project2 main 100 line gossip -s init stop
+```
+
+Or run from the Erlang shell (`'2D'` and `'push-sum'` must be quoted there):
+
+```erlang
+1> project2:start(100, '2D', 'push-sum').
+```
+
 
 Outputs - 
 
@@ -52,6 +72,25 @@ last estimate 50.49999999991999, true average 50.5
 
 
 ## What is Working?
+
+- **Gossip** is working on all four topologies.
+    - The main processs tells the rumor to one actor that starts telling it to a random neighbor.
+    - Each neighbor that hears it once, starts telling it to others randomly.
+    - It stops transmitting once it has heard the rumor 10 times.
+    - We can conclude Convergence when every actor has heard the rumor.
+
+- **Push-Sum** on all four topologies.
+    - Actor `i` starts with `s = i`, `w = 1`, keeps half and sends half on every message.
+    - It finishes once its `s/w` ratio changes by less than `1e-10` for 3 consecutive rounds.
+    - Convergence is reached when every actor is done.
+
+- **Topologies:** 
+    - `full`
+    - `2D` (`numNodes` is rounded up to the next perfect square.)
+    - `line`
+    - `imp2D` (grid neighbors plus one random extra neighbor. `numNodes` is rounded up to the next perfect square.)
+
+- **Timing(ms)** of each run with `erlang:monotonic_time`.
 
 ## Largest Network We Managed to Deal With:
 | Topology | Gossip | Push-Sum |
