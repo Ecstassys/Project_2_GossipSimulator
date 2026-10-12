@@ -54,14 +54,9 @@ last estimate 50.49999999991999, true average 50.5
 ## What is Working?
 
 ## Largest Network We Managed to Deal With:
-### Full:
-
-### 2D:
-
-### Line:
-
-### imp2D
-
-### Gossip
-
-### Push Sum
+| Topology | Gossip | Push-Sum |
+|----------|--------|----------|
+| full |  |  |
+| 2D | |  |
+| line |  |  |
+| imp2D |  |  |
