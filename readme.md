@@ -1,6 +1,8 @@
 ### COP5612 Project 2: Gossip Simulator (Erlang)
 ## Team Members 
 
+- Rohan Vudavagandla (vudavagandla.ro@ufl.edu)
+- Jatin Verma (jverma@ufl.edu)
 
 
 Outputs - 
