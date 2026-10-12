@@ -50,4 +50,18 @@ last estimate 50.49999999991999, true average 50.5
 | Imp2d    | 30.5 ms  | 25.7 ms  |
 | Line     | 390.6 ms | 117.3 ms |
 
-### 
+
+## What is Working?
+
+## Largest Network We Managed to Deal With:
+### Full:
+
+### 2D:
+
+### Line:
+
+### imp2D
+
+### Gossip
+
+### Push Sum
