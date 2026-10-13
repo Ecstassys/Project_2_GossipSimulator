@@ -1,4 +1,5 @@
-%% pushsum.erl - sum/average computation. Convergence = every actor terminated.
+%% pushsum.erl
+%% Convergence = every actor terminated.
 -module(pushsum).
 -export([run/2, actor/7]).
 

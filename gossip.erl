@@ -1,8 +1,9 @@
-%% gossip.erl - rumor spreading. Convergence = every actor has heard the rumor.
+%% gossip.erl
+%% Convergence = every actor has heard the rumor.
 -module(gossip).
 -export([run/2, actor/4]).
 
-%% Main-process side: spawn, kick off, wait, clean up
+%% Main-process: spawn, kick off, wait, clean up
 run(N, Topo) ->
     Main = self(),
     Pids = [spawn(?MODULE, actor, [I, topology:neighbors(Topo, I, N), 0, Main])
@@ -17,12 +18,12 @@ run(N, Topo) ->
 wait_heard(0) -> ok;
 wait_heard(K) -> receive {heard, _} -> wait_heard(K - 1) end.
 
-%% Actor side: Count = how many times did the actor hear the rumor 
+%% Actor's Count = how many times did the actor hear the rumor 
 actor(Id, Ns, Count, Main) ->
     receive
         rumor ->
             case Count of
-                0 -> Main ! {heard, Id},                    % first time: tell main
+                0 -> Main ! {heard, Id},                    % first time tell main
                      erlang:send_after(1, self(), tick);    % and start ticking
                 _ -> ok
             end,
@@ -31,6 +32,6 @@ actor(Id, Ns, Count, Main) ->
             topology:send_random(Id, Ns, rumor),
             erlang:send_after(1, self(), tick),
             actor(Id, Ns, Count, Main);
-        tick ->                                             % if the actor heard the rumor for 10 times: stop sending
+        tick ->                                             % stop sending if the actor heard the rumor for 10 times
             actor(Id, Ns, Count, Main)
     end.

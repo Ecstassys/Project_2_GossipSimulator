@@ -1,4 +1,5 @@
-%% entry point: parses args, times the run, picks the algorithm
+%% entry point
+%% Parses args, times the run, picks the algorithm
 -module(project2).
 -export([start/3, main/1]).
 
@@ -10,11 +11,11 @@ main(_) ->
 
 start(N0, Topo, Algo) ->
     N = topology:round_size(N0, Topo),
-    {Time, _} = measure_running_time(fun() -> dispatch(N, Topo, Algo) end),
+    {Time, _} = measure_running_time(fun() -> dispatch(N, Topo, Algo) end), %% Times the run
     io:format("~p ~p N=~p: ~p ms~n", [Algo, Topo, N, Time / 1000]),
     Time.
 
-dispatch(N, Topo, gossip)      -> gossip:run(N, Topo);
+dispatch(N, Topo, gossip)      -> gossip:run(N, Topo); %% The algorithms gets dispatched based on the input argument.
 dispatch(N, Topo, 'push-sum')  -> pushsum:run(N, Topo).
 
 measure_running_time(Fun) ->
