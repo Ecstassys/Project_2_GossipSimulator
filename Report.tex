@@ -62,6 +62,8 @@ In our implementation, we have defined Convergence for push-sum as every actor h
 Our push-sum is messsage-driven, so only one message is in flight at a time. If a done actor stopped forwarding, that message would be lost and the remaining actors stopped would never converge.
 In every push-sum run the final estimate matched the true average (N+1) /2.
 
+We define convergence for gossip as the moment every actor has heard the rumor at least once.
+
 \subsubsection*{Gossip Algorithm Results}
 \begin{figure}[H]
 \centering
@@ -91,7 +93,7 @@ gossip   & line  & 10000 & 41.0 s   & 1.00 \\
 push-sum & full  & 5000  & 588 ms   & 1.16 \\
 push-sum & imp2D & 5041  & 1.9 s    & 1.17 \\
 push-sum & 2D    & 5041  & 97.5 s   & 2.03 \\
-push-sum & line  & 1000  & 1452.8 s & 3.07 \\
+push-sum & line  & 500   & 128.5 s  & 2.93 \\
 \bottomrule
 \end{tabular}
 
@@ -113,11 +115,11 @@ the grid diameter is about the square root of N).
 N=5041 it is about 7x faster for gossip (71 ms vs 501 ms) and about 50x faster for push-sum (1.9 s vs 97
 s).
 \textbf{Push-sum scales much worse than gossip on sparse topologies.} The exponent is about 2.0 for 2D
-and about 3.1 for the line (1.1 s at N=100, 9.4 s at N=200, 129 s at N=500, 1453 s at N=1000), against about 1.2 for full and
+and about 2.9 for the line (1.1 s at N=100, 9.4 s at N=200, 129 s at N=500), against about 1.2 for full and
 imp2D. In push-sum every actor's ratio must settle, not just receive one message, and only one message
 is in flight at a time, so the pairs have to diffuse slowly across a poorly connected network.
 \textbf{Largest networks:} gossip reached N=10000 on the line and N=5000 or more on the others; push-sum
-reached N=5000 on full, 5041 on imp2D and 2D, and N=1000 on the line.
+reached N=5000 on full, 5041 on imp2D and 2D, and N=500 on the line (It was taking more than 20 minutes on N=1000).
 
 \section{Caveats}
 All measurements for the report and the README come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
