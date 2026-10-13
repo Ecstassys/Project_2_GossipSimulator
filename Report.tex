@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{titlesec}
 \usepackage{float}
+\usepackage{booktabs}
 \setlength{\parskip}{.8mm}
 
 \pdfauthor{Vudavagandla Rohan, Verma Jatin}
@@ -57,7 +58,7 @@ line, imperfect 2D grid). Each data point is the average of 3 runs, measured wit
 {erlang:monotonic\_time(microsecond)} on one machine. For 2D and imp2D the number of actors is rounded
 up to a perfect square. 
 
-In our implementation, we have defined Convergence for push-sum as every actor has reported that it is done (its s/w ratio changed by less than 1e-10 in 3 consecutive rounds). A done actor it keeps receiving and forwarding half of its s and W instead of exiting.
+In our implementation, we have defined Convergence for push-sum as every actor has reported that it is done (its s/w ratio changed by less than 1e-10 in 3 consecutive rounds). A done actor keeps receiving and forwarding half of its s and W instead of exiting.
 Our push-sum is messsage-driven, so only one message is in flight at a time. If a done actor stopped forwarding, that message would be lost and the remaining actors stopped would never converge.
 In every push-sum run the final estimate matched the true average (N+1) /2.
 
@@ -76,11 +77,28 @@ In every push-sum run the final estimate matched the true average (N+1) /2.
 \end{figure}
 
 \subsubsection*{Summary of all the runs}
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\includegraphics[width=0.6\textwidth]{image.png}
-\caption{Summary of All Runs}
-\end{figure}
+\begin{tabular}{llrrr}
+\toprule
+Algorithm & Topology & Largest $N$ run & Time at largest $N$ & Growth exponent$^{*}$ \\
+\midrule
+gossip   & full  & 5000  & 56 ms    & 0.22 \\
+gossip   & imp2D & 5041  & 71 ms    & 0.18 \\
+gossip   & 2D    & 5041  & 501 ms   & 0.54 \\
+gossip   & line  & 10000 & 41.0 s   & 1.00 \\
+\midrule
+push-sum & full  & 5000  & 588 ms   & 1.16 \\
+push-sum & imp2D & 5041  & 1.9 s    & 1.17 \\
+push-sum & 2D    & 5041  & 97.5 s   & 2.03 \\
+push-sum & line  & 1000  & 1452.8 s & 3.07 \\
+\bottomrule
+\end{tabular}
+
+\vspace{1ex}
+{\footnotesize $^{*}$Slope of a least-squares fit of $\log(\mathrm{time})$ against $\log(N)$ over all machine 1 data points, i.e.\ time $\propto N^{\mathrm{exponent}}$.}
+\caption{Summary of All Runs (machine 1)}
+\end{table}
 
 
 \section{Finding}
@@ -95,14 +113,14 @@ the grid diameter is about the square root of N).
 N=5041 it is about 7x faster for gossip (71 ms vs 501 ms) and about 50x faster for push-sum (1.9 s vs 97
 s).
 \textbf{Push-sum scales much worse than gossip on sparse topologies.} The exponent is about 2.0 for 2D
-and about 2.9 for the line (1.1 s at N=100, 9.4 s at N=200, 129 s at N=500), against about 1.2 for full and
+and about 3.1 for the line (1.1 s at N=100, 9.4 s at N=200, 129 s at N=500, 1453 s at N=1000), against about 1.2 for full and
 imp2D. In push-sum every actor's ratio must settle, not just receive one message, and only one message
 is in flight at a time, so the pairs have to diffuse slowly across a poorly connected network.
 \textbf{Largest networks:} gossip reached N=10000 on the line and N=5000 or more on the others; push-sum
 reached N=5000 on full, 5041 on imp2D and 2D, and N=1000 on the line.
 
 \section{Caveats}
-All measurements for the report, and README come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
+All measurements for the report and the README come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
 Erlang scheduler shares cores among thousands of processes. Only 3 runs were averaged per point, so
 small differences (especially at small N) are noise. Gossip times include the 1 ms send timer, which sets a
 floor of a few milliseconds per hop of the spread.
