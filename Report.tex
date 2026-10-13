@@ -8,8 +8,6 @@
 \usepackage{float}
 \setlength{\parskip}{.8mm}
 
-\title{\huge Gossip and Push-Sum Simulator Report \\ \LARGE {COP5612 : Distributed Operating Systems Principles}}
-\author{\Large Vudavagandla Rohan, Verma Jatin\\ vudavagandla.ro@ufl.edu, jverma@ufl.edu}
 \pdfauthor{Vudavagandla Rohan, Verma Jatin}
 
 \hypersetup{
@@ -20,19 +18,36 @@
 \titlespacing*{\subsection}{0pt}{3ex}{2ex}
 
 \begin{document}
-\maketitle
+
+\begin{titlepage}
+  \centering
+  \vspace*{\fill}
+
+  {\huge\bfseries Gossip and Push-Sum Simulator Report\par}
+  \vspace{1em}
+  {\LARGE COP5615 : Distributed Operating Systems Principles\par}
+  \vspace{0.5em}
+  {\large Professor Alin Dobra\par}
+  \vspace{2em}
+  {\Large Vudavagandla Rohan, Verma Jatin\par}
+  \vspace{0.5em}
+  {\normalsize vudavagandla.ro@ufl.edu, jverma@ufl.edu\par}
+
+  \vspace*{\fill}
+\end{titlepage}
+\clearpage
 
 \section{Theoretical Part}
 \subsection{Gossip Algorithm}
 A decentralized communication method which is used for exchanging information among different nodes, this helps information to exchange between multiple nodes in faster and reliable way 
-$$(O(\log n) rounds)$$ is the the logarithmic  time for reaching every node.
+$O(\log n)$ rounds is the logarithmic  time for reaching every node.
 
 A participant (actor) is told/sent a rumor (fact) by the main process.
 Each actor selects a random neighbor and tells it the rumor.
 Each actor keeps track of rumors and how many times it has heard the rumor. It stops transmitting once it has heard the rumor 10 times in our implementation.
 
 \subsection{Push-Sum}
-Similar to Gossip Algorithm but its find of different, its used for calculating average or aggregate value across the distributed network 
+Similar to Gossip Algorithm but its kind of different, its used for calculating average or aggregate value across the distributed network 
 it does not require central coordinator or a doubly stochastic communication matrix for passing the information, it was  developed by Kempe, Dobra, and Gehrke in 2003
 
 \newpage
@@ -40,10 +55,12 @@ it does not require central coordinator or a doubly stochastic communication mat
 Every node is an Erlang process. We implemented gossip and push-sum on four topologies (full, 2D grid,
 line, imperfect 2D grid). Each data point is the average of 3 runs, measured with
 {erlang:monotonic\_time(microsecond)} on one machine. For 2D and imp2D the number of actors is rounded
-up to a perfect square. Convergence for gossip means every actor has heard the rumor at least once
-(actors stop transmitting after 10 hearings, and send on a 1 ms timer until then). Convergence for
-push-sum means every actor has terminated (its s/w ratio changed by less than 1e-10 in 3 consecutive
-rounds). In every push-sum run the final estimate matched the true average (N+1)/2.
+up to a perfect square. 
+
+In our implementation, we have defined Convergence for push-sum as every actor has reported that it is done (its s/w ratio changed by less than 1e-10 in 3 consecutive rounds). A done actor it keeps receiving and forwarding half of its s and W instead of exiting.
+Our push-sum is messsage-driven, so only one message is in flight at a time. If a done actor stopped forwarding, that message would be lost and the remaining actors stopped would never converge.
+In every push-sum run the final estimate matched the true average (N+1) /2.
+
 \subsubsection*{Gossip Algorithm Results}
 \begin{figure}[H]
 \centering
@@ -85,11 +102,11 @@ is in flight at a time, so the pairs have to diffuse slowly across a poorly conn
 reached N=5000 on full, 5041 on imp2D and 2D, and N=1000 on the line.
 
 \section{Caveats}
-All measurements come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
+All measurements for the report, and README come from one machine \textbf{Macbook Pro M3 Pro} , so absolute times depend on the hardware and on how the
 Erlang scheduler shares cores among thousands of processes. Only 3 runs were averaged per point, so
 small differences (especially at small N) are noise. Gossip times include the 1 ms send timer, which sets a
 floor of a few milliseconds per hop of the spread.
 
-The measurements in the dashed plot comes from \textbf{Macbook Pro M1 Pro}. We decided to show plots on both of our machines to see differences and similarities in the plot due to different CPU chips. 
+The measurements in the dashed plot comes from \textbf{Macbook Pro M1 Pro}. We decided to show plots on both of our machines to see differences and similarities in the plot due to different CPU chips.
 
 \end{document}

@@ -26,6 +26,7 @@ push-sum,2D,1024,3148.74,3,1
 push-sum,line,100,1134.46,3,1
 push-sum,line,200,9367.75,3,1
 push-sum,line,500,128525.13,3,1
+push-sum,line,1000,1452848.39,3,1
 push-sum,imp2D,100,21.56,3,1
 push-sum,imp2D,225,31.90,3,1
 push-sum,imp2D,529,95.93,3,1
