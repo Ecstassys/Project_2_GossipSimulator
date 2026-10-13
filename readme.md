@@ -27,48 +27,58 @@ Or run from the Erlang shell (`'2D'` and `'push-sum'` must be quoted there):
 
 Outputs - 
 
+```erlang
 1> project2:start(100, full, gossip).
 gossip full N=100: 24.602 ms
 24602
+```
 
+```erlang
 2> project2:start(100, line, gossip).
 gossip line N=100: 390.63 ms
 390630
-
+```
+```erlang
 3> project2:start(100, '2D', gossip).
 gossip '2D' N=100: 57.962 ms
 57962
-
+```
+```erlang
 4> project2:start(100, imp2D, gossip).
 gossip imp2D N=100: 30.545 ms
 30545
-
+```
+```erlang
 5> project2:start(100, full, 'push-sum').
 last estimate 50.50000000001979, true average 50.5
 'push-sum' full N=100: 10.595 ms
 10595
-
+```
+```erlang
 6> project2:start(100, line, 'push-sum').
 last estimate 50.49999992435291, true average 50.5
 'push-sum' line N=100: 1177.277 ms
 1177277
-
+```
+```erlang
 7> project2:start(100, imp2D, 'push-sum').
 last estimate 50.50000000002826, true average 50.5
 'push-sum' imp2D N=100: 25.748 ms
 25748
-
+```
+```erlang
 8> project2:start(100, '2D', 'push-sum').
 last estimate 50.49999999991999, true average 50.5
 'push-sum' '2D' N=100: 58.63 ms
 58630
+```
 
 |  N = 100 | Gossip   | Push-Sum |
 |----------|----------|----------|
 | Full     | 24.6 ms  | 10.6 ms  |
 | 2D       | 58.0 ms  | 58.6 ms  |
 | Imp2d    | 30.5 ms  | 25.7 ms  |
-| Line     | 390.6 ms | 117.3 ms |
+| Line     | 390.6 ms | 1177.3 ms |
 
 
 ## What is Working?
@@ -95,7 +105,7 @@ last estimate 50.49999999991999, true average 50.5
 ## Largest Network We Managed to Deal With:
 | Topology | Gossip | Push-Sum |
 |----------|--------|----------|
-| full |  |  |
-| 2D | |  |
-| line |  |  |
-| imp2D |  |  |
+| full | 5000 | 5000 |
+| 2D | 5041 | 5041 |
+| line | 10000 | 1000 |
+| imp2D | 5041 | 5041 |
